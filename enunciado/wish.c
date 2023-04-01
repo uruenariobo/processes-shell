@@ -7,6 +7,90 @@
 #include <sys/stat.h>
 #include <string.h>
 #include "vector.h"
+#include <termios.h>
+#include <ctype.h>
+
+
+#define MAX_HISTORY 10
+#define MAX_LINE_LENGTH 256
+
+
+void navigate_command_history(char *history[], char *line2, int *history_count, int *history_idx, int *line_idx, char *ch)
+{
+    *ch = getchar(); // '[' character
+    *ch = getchar(); // Arrow key code
+
+    if (*ch == 'A')
+    { // Up arrow key
+        if (*history_count > 0 && *history_idx > 0)
+        {
+            (*history_idx)--;
+            memset(line2, 0, MAX_LINE_LENGTH);
+            strncpy(line2, history[*history_idx], MAX_LINE_LENGTH - 1);
+            *line_idx = strlen(line2);
+            printf("\033[2K\r%s", line2);
+            fflush(stdout);
+        }
+    }
+    else if (*ch == 'B')
+    { // Down arrow key
+        if (*history_count > 0 && *history_idx < *history_count - 1)
+        {
+            (*history_idx)++;
+            memset(line2, 0, MAX_LINE_LENGTH);
+            strncpy(line2, history[*history_idx], MAX_LINE_LENGTH - 1);
+            *line_idx = strlen(line2);
+            printf("\033[2K\r%s", line2);
+            fflush(stdout);
+        }
+    }
+}
+
+void add_command_to_history(char *history[], char *line, int *line_idx, int *history_count, int *history_idx)
+{
+    putchar('\n');
+
+    if (*line_idx > 0)
+    {
+        // Copy the current line to the history
+        if (*history_count == MAX_HISTORY)
+        {
+            free(history[0]);
+            memmove(history, history + 1, (MAX_HISTORY - 1) * sizeof(char *));
+            (*history_count)--;
+        }
+        history[*history_count] = malloc((*line_idx + 1) * sizeof(char));
+        strncpy(history[*history_count], line, *line_idx);
+        history[*history_count][*line_idx] = '\0';
+        (*history_count)++;
+        *history_idx = *history_count;
+    }
+
+    *line_idx = 0;
+}
+
+
+void handle_backspace_key(char *line, int *line_idx)
+{
+    if (*line_idx > 0)
+    {
+        putchar('\b');
+        putchar(' ');
+        putchar('\b');
+        (*line_idx)--;
+        line[*line_idx] = 0;
+    }
+}
+
+void handle_input(char *line, int *line_idx, char *ch)
+{
+    if (*line_idx < MAX_LINE_LENGTH - 1)
+    {
+        putchar(*ch);
+        line[*line_idx] = *ch;
+        (*line_idx)++;
+    }
+}
 
 Vector PATH;
 
@@ -40,6 +124,24 @@ int execute_command (Vector tokens);
 int main (int argc, char* argv[])
 {
 
+    // Atributos para el command history
+    char ch;
+    char *history[MAX_HISTORY] = {NULL};
+    int history_idx = 0;
+    int line_idx = 0;
+    int history_count = 0;
+//    struct termios old_term, new_term;
+    
+        //  Atributos  para el batch mode
+    FILE *fp;
+    size_t len = 0;
+    
+     //correciòn
+     
+     char* line2 = NULL;
+     
+     ssize_t read_value = getline(&line2, &len, fp);
+
     FILE* input_file = NULL;
     for (int i = 1; i < argc; i++) {
         FILE* cur_file = fopen(argv[i], "r");
@@ -69,6 +171,43 @@ int main (int argc, char* argv[])
 
     while (1)
     {
+    
+    
+    
+        char *line2 = (char *)malloc(sizeof(char) * MAX_LINE_LENGTH);
+    
+    	if (argc == 1) // Se ejecuta esta linea en modo interactivo (no se ingreso un argumento para el batchmode)
+         {
+            ch = getchar();
+
+            if (ch == '\033')
+            { // Escape sequence
+                navigate_command_history(history, line2, &history_count, &history_idx, &line_idx, &ch);
+            }
+            else if (ch == '\n')
+            { // Enter key
+                add_command_to_history(history, line2, &line_idx, &history_count, &history_idx);
+                fflush(stdout);
+            }
+            else if (ch == 127)
+            { // Backspace key
+                handle_backspace_key(line2, &line_idx);
+            }
+            else if (ch >= 32 && ch <= 126)
+            { // Printable character
+                handle_input(line2, &line_idx, &ch);
+            }
+        }
+        else if (argc == 2) // Si hay 2 argumentos, significa que se entro un archivo para el batchmode
+        {
+            read = getline(&line2, &len, fp); // Se lee cada linea del archivo batch
+            if (read == -1)
+            {
+                break;
+            }
+        }
+    
+    
         if (input_file == NULL) printf("wish> ");
         char* line = NULL;
         size_t n = 0;
@@ -242,3 +381,5 @@ int execute_command (Vector tokens) {
     showError();
     return -1;
 }
+
+
