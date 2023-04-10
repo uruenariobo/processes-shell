@@ -10,14 +10,14 @@ Este comando muestra los permisos del archivo inicialmente. Como no teníamos lo
 
 chmod +x ../tester/run-test.sh
 
-
-#Act1.
+# ROADMAP PARA LA CONSOLA
+# Act1.
 
 Su shell basico será llamadao wish (abreviación para Wisconsin Shell, de la cual se tomó esta practica), un shell es basicamente un loop interactivo que: imprime repetidamente el promp wish>  (nota: despues del signo > hay un espacio), analiza (parse) el comando ingresado a la entrada, ejecuta dicho comando y espera a que este finalice. Este proceso es repetido hasta que el usuario digite exit. Una vez compile el código, el nombre final de su ejecutable será wish.
 
 Creo entonces que es crear el programa que permita ejecutar el loop.
 
-#Act 2. 
+# Act 2. 
 
 El shell puede ser invocado tanto sin argumentos o con unico argumento; cualquier otra cosa generará un error. A continuación se muestra como sería la ejecución para el caso sin argumento:
 
@@ -26,7 +26,7 @@ wish>
 
 Creo que es crear la forma de invocarlo y generar el modo de excepción que arroje error.
 
-#Act3
+# Act3
 
 El shell tambien soporta un batch mode, el cual lee la entrada desde un batch file y ejecuta los comandos contenidos en este. A continuación se muestra como el shell wish ejecutaria un batch file llamado batch.txt:
 
@@ -34,7 +34,7 @@ prompt> ./wish batch.txt
 
 Creo que es crear el modo batch
 
-#Act4
+# Act4
 
 Usted deberia estructurar su shell de manera que cree un procesos para cada nuevo comando (con los built-in commands, que se discutirán abajo, como excepción). El shell basico deberá ser capaz de analizar (parser) un comando y correr el programa correspondiente a ese comando. Por ejemplo, si el usuario digita ls -la /tmp, el shell deberia ejecutar el programa /bin/ls con los argumentos dados -la y /tmp (¿Como sabe el shell ejecutar /bin/ls?. Es algo llamado shell path; mas de esto abajo)
 
@@ -50,7 +50,7 @@ El shell es muy simple (conpeptualmente): Este corre en un ciclo infinito solici
 
 Creo o supongo 😅 que es crear la.invocacion exit
 
-#Act6
+# Act6
 
 Sin embargo, el shell tambien soportara el batch mode, en el cual al shell se le da como entrada un archivo de comandos; en este caso, el shell no leerá la entrada de usuario (de stdin) sino que la entrada será tomada desde un archivo que contendrá los comandos a ejecutar.
 
@@ -62,26 +62,26 @@ En cada modo, si se encuentra un marcador de fin de archivo EOF (end-of-file mar
 
 Luego en Path, entiendo que se explican las formas correctas de acceder al path, En comandos built in, se encuentra una tarea
 
-#Act7
+# Act7
 
 En este proyecto, usted deberá implementar exit, cd, y path como comandos integrados (build.in commnads).
 
 En Redirection entiendo que está como debemos mostrar la salida, podríamos decir que es la siguiente actividad
 
-#Act8
+# Act8
 ...Por ejemplo, si un usuario escribe ls -la /tmp > output, no se debe imprimir nada en la pantalla. En su lugar, la salida estándar del programa ls debería redireccionarse archivo output. Además, la salida de error estándar del programa debe redirigirse al archivo output (el giro es que es un poco diferente a la redirección estándar).
 
 Si el archivo output existe antes de ejecutar su programa, simplemente debe sobrescribirlo (después de truncarlo)...
 
 El formato exacto de la redirección es un comando (y posiblemente algunos argumentos) seguido del símbolo de redirección seguido de un nombre de archivo. Varios operadores de redirección o varios archivos a la derecha del signo de redirección son errores.
 
-#Act9
+# Act9
 
 En la consola de Linux, cuando usted oprime la tecla Flecha arriba (UP arrow), usted puede navegar en el historial de los últimos comandos que se han utilizado. Usted debe implementar esta funcionalidad garantizando un historial de hasta 20 comandos.
 
 Entonces, cómo según lo que leemos la lectura y la salida no son por consola, creeooo🤔 que deberíamos hacer una salida del historial de los 20 últimos elementos, por mi le ponemos el historial de todo 😅
 
-#Act10
+# Act10
 
 El shell también deberá permitir al usuario ejecutar comandos paralelos. Esto se logra con el operador ampersand (&) de la siguiente manera:
 
@@ -94,7 +94,7 @@ Incluyendo esto...
 
 Luego, después de iniciar todos estos procesos, asegurese de usar wait() (o waitpid) para esperar a que se completen. Una vez finalizados todos los procesos, devuelva el control al usuario como de costumbre (o, si está en batch mode, pase a la siguiente línea).
 
-#Act11
+# Act11
 
 Solo hay un mensaje de error el cual se debe imprimir cada vez que se encuentre un error de cualquier tipo:
 
@@ -105,6 +105,8 @@ El mensaje de error debe ser impreso a stderr (standard error), como se mostró 
 Sinónimo de creo que es implementar la salida de error
 
 Y al final en MISCELANUS HINTS encontramos los consejos para hacer el desarrollo
+
+# ROADMAP PARA LOS TEST
 
 Test 1: Entrada para comprobar cd defectuoso. No se pasan argumentos a cd.
 Test 2:  los argumentos se pasan a cd.
